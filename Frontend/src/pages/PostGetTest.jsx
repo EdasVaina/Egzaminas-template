@@ -1,24 +1,43 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 
 const API = "http://localhost:3000";
 
 export default function PostGetTest() {
-    const [message, setMessage] = useState("");
+    const [title, setTitle] = useState("");
+    const [desc, setDesc] = useState("");
     const [data, setData] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [editingValue, setEditingValue] = useState("");
+    const [{ divs }, setDivs] = useState({ divs: [] });
+
+    const countRef = useRef(0);
+    const countRef2 = useRef(0);
+
+    // const addDivs = () => {
+    //     divs.push(<div key={divs.length}>Hello</div>);
+    //     setDivs({ divs: [...divs] });
+    //     console.log('divs')
+    // };
 
     // POST
     const sendData = async () => {
-        await axios.post(`${API}/api/data`, { message });
-        setMessage("");
+        await axios.post(`${API}/api/data`, { title, desc });
+        console.log(title, desc)
+        setTitle("");
+        setDesc("");
+        countRef.current += 1;
+        if (countRef.current % 2 === 0) {
+            // addDivs();
+            countRef = 0;
+        }
     };
 
     // GET
     const getData = async () => {
         const res = await axios.get(`${API}/api/data`);
         setData(res.data.data);
+        // addDivs();
     };
     // DELETE
     const deleteItem = async (index) => {
@@ -35,7 +54,7 @@ export default function PostGetTest() {
         if (!editingValue) return;
 
         await axios.put(`${API}/api/data/${index}`, {
-            message: editingValue,
+            title: editingValue,
         });
 
         setEditingIndex(null);
@@ -46,13 +65,16 @@ export default function PostGetTest() {
 
     return (
         <div style={{ padding: 20 }}>
-            <h1>CRUD App (with UPDATE)</h1>
+            <h1>Menu</h1>
 
             <input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="New message"
-            />
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="New title" />
+            <input
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+                placeholder="description" />
 
             <button onClick={sendData}>POST</button>
             <button onClick={getData}>GET</button>
@@ -61,7 +83,8 @@ export default function PostGetTest() {
 
             <ul>
                 {data.map((item, i) => (
-                    <li key={i} style={{ marginBottom: 10 }}>
+                    <p key={i} style={{ marginBottom: 10 }}>
+                        {/* {divs} */}
                         {editingIndex === i ? (
                             <>
                                 <input
@@ -76,7 +99,7 @@ export default function PostGetTest() {
                                 <button onClick={() => deleteItem(i)}>Delete</button>
                             </>
                         )}
-                    </li>
+                    </p>
                 ))}
             </ul>
         </div>

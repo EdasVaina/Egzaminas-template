@@ -9,7 +9,7 @@ export default function Home() {
 
   return (
     <div className="p-10">
-      <input type="button" name="" id="" className="btn" />
+      <input type="button" name="" id="" className="btn " />
       <h1 className="text-2xl font-bold">Home</h1>
       <p className="mt-5">{response}</p>
       <p>{msg}</p>
